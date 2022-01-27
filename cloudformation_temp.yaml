@@ -1,0 +1,33 @@
+Resources:
+  BuckHell1:
+    Description: An empty bucket to test cloudformation deployment
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+  CflambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CflambdaRole
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+
+
+  HelloLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: HelloLambdaFunction
+      Role: !GetAtt CflambdaRole.Arn
+      Runtime: python3.7
+      Handler: index.my_handler
+      Code:
+        ZipFile: |
+          def my_handler(event, context):
+            message = 'Hello First Cloud Formation Lambda function!'
+            return message

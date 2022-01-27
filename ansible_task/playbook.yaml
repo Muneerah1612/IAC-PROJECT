@@ -1,0 +1,22 @@
+- hosts: localhost
+
+
+  tasks:
+    - name: archive lambda
+      archive:
+        path: ./lamda.py
+        format: zip
+    - name: my lambda function
+      community.aws.lambda:
+        state: present
+        name: my_lambda
+        zip_file: lamda.py.zip
+        runtime: python3.6
+        region: us-east-1
+        handler: lamda.lambda_handler
+        role: 'arn:aws:iam::913814110218:role/service-role/lambda_basic_execution'
+    - name: Run my lambda
+      execute_lambda:
+        name: my_lambda
+        wait: true
+      register: my_lambda
